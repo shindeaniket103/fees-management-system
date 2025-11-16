@@ -1,0 +1,40 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment variables
+.env
+.env.*
+
+# Virtual environment
+venv/
+ENV/
+env/
+
+# Flask instance folder (contains secrets)
+instance/
+
+# Logs
+*.log
+
+# IDE files
+.vscode/
+.idea/
+
+# OS system files
+.DS_Store
+Thumbs.db
+
+# MyPy cache
+.mypy_cache/
+
+# Test results
+.pytest_cache/
+
+# MongoDB dumps
+dump/
+
+# Zip backups
+*.zip

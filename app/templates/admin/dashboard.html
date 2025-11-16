@@ -1,0 +1,81 @@
+{% extends 'base_admin.html' %}
+{% block content %}
+
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="fw-bold">Admin Dashboard</h2>
+    <a class="btn btn-primary" href="{{ url_for('admin.fee_structures') }}">
+      <i class="bi bi-gear-fill me-1"></i> Manage Fee Structures
+    </a>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="card p-3 shadow-sm">
+        <h6 class="text-muted">Total Categories</h6>
+        <h3 class="fw-bold">{{ total_categories }}</h3>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card p-3 shadow-sm">
+        <h6 class="text-muted">Total Components</h6>
+        <h3 class="fw-bold">{{ total_components }}</h3>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card p-3 shadow-sm">
+        <h6 class="text-muted">Latest Version</h6>
+        <h3 class="fw-bold">{{ latest_version or '—' }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h5 class="fw-bold mb-3">Fee Structures</h5>
+
+      <div class="table-responsive">
+        <table class="table align-middle table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>Category</th>
+              <th>Version</th>
+              <th>Total Components</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for f in fee_structs %}
+            <tr>
+              <td>{{ f.category }}</td>
+              <td>v{{ f.version }}</td>
+              <td>{{ f.components|length }} items</td>
+              <td>
+                <a href="{{ url_for('admin.fee_structures') }}?category={{ f.category }}"
+                   class="btn btn-outline-primary btn-sm">
+                  <i class="bi bi-eye"></i> View
+                </a>
+              </td>
+            </tr>
+
+            {% else %}
+            <tr>
+              <td colspan="4" class="text-center text-muted py-4">
+                No fee structures found.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

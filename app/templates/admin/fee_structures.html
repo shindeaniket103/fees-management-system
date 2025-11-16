@@ -1,0 +1,143 @@
+{% extends 'base_admin.html' %}
+{% block content %}
+
+<div class="container-fluid">
+
+    <h2 class="fw-bold mb-4">Fee Structures</h2>
+
+    <!-- Form Card -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white">
+            <h5 class="fw-bold mb-0">Add New Fee Structure</h5>
+        </div>
+
+        <div class="card-body">
+            <form method="POST" id="feeForm">
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Category</label>
+                    <input type="text" name="category" class="form-control" placeholder="e.g. General / OBC / SC" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Fee Components</label>
+
+                    <!-- Dynamic Components Area -->
+                    <div id="componentsArea"></div>
+
+                    <!-- Add Component Button -->
+                    <button type="button" class="btn btn-outline-primary mt-3" onclick="addComponentRow()">
+                        <i class="bi bi-plus-circle"></i> Add Component
+                    </button>
+
+                    <!-- Hidden input to store final JSON -->
+                    <input type="hidden" name="components" id="componentsJson">
+                </div>
+
+                <button class="btn btn-success mt-3" onclick="prepareComponentsJson()">
+                    <i class="bi bi-save2 me-1"></i> Save
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Existing Fee Structures Table -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-white">
+            <h5 class="fw-bold mb-0">Existing Fee Structures</h5>
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <table class="table align-middle table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Category</th>
+                            <th>Version</th>
+                            <th>Components</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for fs in fee_structs %}
+                        <tr>
+                            <td>{{ fs.category }}</td>
+                            <td>v{{ fs.version }}</td>
+                            <td>
+                                <ul class="mb-0">
+                                    {% for comp in fs.components %}
+                                    <li>{{ comp.name }} — ₹{{ comp.amount }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="3" class="text-center text-muted py-4">No fee structures found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- DYNAMIC FORM JAVASCRIPT -->
+<script>
+    let componentIndex = 0;
+
+    function addComponentRow() {
+        const area = document.getElementById("componentsArea");
+
+        const row = document.createElement("div");
+        row.classList.add("row", "g-2", "align-items-center", "mb-2");
+        row.setAttribute("data-index", componentIndex);
+
+        row.innerHTML = `
+            <div class="col-md-6">
+                <input type="text" class="form-control" placeholder="Component Name"
+                       name="comp_name_${componentIndex}" required>
+            </div>
+
+            <div class="col-md-4">
+                <input type="number" class="form-control" placeholder="Amount"
+                       name="comp_amount_${componentIndex}" required>
+            </div>
+
+            <div class="col-md-2">
+                <button type="button" class="btn btn-danger w-100"
+                        onclick="this.closest('.row').remove()">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+        `;
+
+        area.appendChild(row);
+        componentIndex++;
+    }
+
+    function prepareComponentsJson() {
+        const rows = document.querySelectorAll("#componentsArea .row");
+        const components = [];
+
+        rows.forEach(row => {
+            const index = row.getAttribute("data-index");
+            const name = row.querySelector(`[name="comp_name_${index}"]`).value;
+            const amount = row.querySelector(`[name="comp_amount_${index}"]`).value;
+
+            components.push({
+                name: name,
+                amount: parseInt(amount)
+            });
+        });
+
+        document.getElementById("componentsJson").value = JSON.stringify(components);
+    }
+</script>
+
+{% endblock %}
